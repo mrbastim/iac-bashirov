@@ -43,7 +43,7 @@ APP_INTERNAL_IP=$(yc compute instance get "$PREFIX-app-1" --format json 2>/dev/n
 WEB3_EXTERNAL_IP=$(yc compute instance get "$PREFIX-web-3" --format json 2>/dev/null | jq -r '.network_interfaces[0].primary_v4_address.one_to_one_nat.address // empty')
 
 if [ -n "$APP_INTERNAL_IP" ] && [ -n "$WEB3_EXTERNAL_IP" ]; then
-  APP_HTTP=$(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 student@"$WEB1_EXTERNAL_IP" "curl -s -o /dev/null -w '%{http_code}' --connect-timeout 4 http://$APP_INTERNAL_IP:$APP_PORT" 2>/dev/null || true)
+  APP_HTTP=$(ssh -o StrictHostKeyChecking=no -o ConnectTimeout=5 student@"$WEB3_EXTERNAL_IP" "curl -s -o /dev/null -w '%{http_code}' --connect-timeout 4 http://$APP_INTERNAL_IP:$APP_PORT" 2>/dev/null || true)
   if [ "$APP_HTTP" = "200" ]; then
     echo "✓ сервер приложения ($APP_INTERNAL_IP) доступен с $PREFIX-web-3 по внутреннему адресу"
   else
